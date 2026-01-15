@@ -59,6 +59,9 @@ public:
 
 	//JumpjetLocomotionClass
 
+	int GetZBalloonHover()
+	{ JMP_THIS(0x54D820); }
+
 	//Constructor
 	JumpjetLocomotionClass()
 		: LocomotionClass(noinit_t())

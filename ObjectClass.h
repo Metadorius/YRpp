@@ -8,6 +8,7 @@
 #include <Audio.h>
 #include <ObjectTypeClass.h>
 #include <TagClass.h>
+#include <RulesClass.h>
 
 #include <Helpers/Template.h>
 
@@ -196,9 +197,11 @@ public:
 		{ PUSH_VAR32(color); PUSH_VAR32(dst_Z); PUSH_VAR32(dst_Y); PUSH_VAR32(dst_X);
 		  PUSH_VAR32(src_Z); PUSH_VAR32(src_Y); PUSH_VAR32(src_X); CALL(0x704E40); }
 
-	int DistanceFrom(AbstractClass *that) const
-		{ JMP_THIS(0x5F6440); }
+	DirStruct Direction(AbstractClass* pTarget)
+	{ JMP_THIS(0x5F3DB0); }
 
+	int DistanceFrom(AbstractClass* that) const
+	{ JMP_THIS(0x5F6440); }
 
 	double GetHealthPercentage() const
 		{ return static_cast<double>(this->Health) / this->GetType()->Strength; }
@@ -263,6 +266,16 @@ public:
 		CoordStruct ret;
 		this->GetFLH(&ret, idxWeapon, base);
 		return ret;
+	}
+
+	DamageState TakeDamage(int damage, WarheadTypeClass* pWH, bool crewed, bool ignoreDefenses = true, ObjectClass* pAttacker = nullptr, HouseClass* pAttackingHouse = nullptr)
+	{
+		return ReceiveDamage(&damage, 0, pWH, pAttacker, ignoreDefenses, !crewed, pAttackingHouse);
+	}
+
+	DamageState TakeDamage(int damage, bool crewed, bool ignoreDefenses = true, ObjectClass* pAttacker = nullptr, HouseClass* pAttackingHouse = nullptr)
+	{
+		return TakeDamage(damage, RulesClass::Instance->C4Warhead, crewed, ignoreDefenses, pAttacker, pAttackingHouse);
 	}
 
 	//Constructor NEVER CALL IT DIRECTLY

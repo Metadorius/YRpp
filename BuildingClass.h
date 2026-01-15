@@ -255,8 +255,8 @@ public:
 	BuildingTypeClass* Type;
 	FactoryClass* Factory;
 	CDTimerClass C4Timer;
-	int BState;
-	int QueueBState;
+	BStateType BState;
+	BStateType QueueBState;
 	DWORD OwnerCountryIndex;
 	InfantryClass* C4AppliedBy;
 	DWORD unknown_544;

@@ -102,7 +102,7 @@ public:
 	DynamicVectorClass<SpawnNode*> SpawnedNodes;
 	CDTimerClass UpdateTimer;
 	CDTimerClass SpawnTimer;
-	AbstractClass* Target;
-	AbstractClass* NewTarget;
+	AbstractClass* Destination; // SpawnMissile's destination
+	AbstractClass* Target; // Spwan plane's target
 	SpawnManagerStatus Status;
 };

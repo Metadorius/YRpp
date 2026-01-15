@@ -35,9 +35,22 @@ public:
 	virtual int Size() const R0;
 
 	//AbstractTypeClass
-
 	void CalculateSpeed()
 		{ JMP_THIS(0x7729F0); }
+
+	int GetSpeed(int range)
+		{ JMP_THIS(0x773070); }
+
+	//Helper
+	int GetSpeed(CoordStruct source, CoordStruct target)
+	{
+		return GetSpeed((int)source.DistanceFrom(target));
+	}
+
+	static int __fastcall GetSpeed(double range, int gravity)
+		{ JMP_STD(0x48AB90); }
+
+
 
 	//Constructor
 	WeaponTypeClass(const char* pID = nullptr)

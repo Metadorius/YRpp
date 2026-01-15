@@ -51,6 +51,9 @@ public:
 	void LoadVoxel()
 		{ JMP_STD(0x5F8110); }
 
+	void DestroyVoxelShadowCache()
+		{ JMP_STD(0x5F99E0); }
+
 	//Constructor
 	ObjectTypeClass(const char* pID) noexcept
 		: ObjectTypeClass(noinit_t())

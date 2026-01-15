@@ -154,7 +154,7 @@ public:
 	virtual bool AddObject(ObjectClass* pObject, bool sorted) override
 		{ JMP_THIS(0x55BAA0); }
 
-	virtual void PointerGotInvalid(AbstractClass* pInvalid, bool removed)
+	virtual void Detach(AbstractClass* pItem, bool all)
 		{ JMP_THIS(0x55B880); }
 
 	void RemoveObject(ObjectClass* pObject)
@@ -196,7 +196,7 @@ public:
 	virtual void AllocateCells() RX;
 	virtual void DestructCells() RX;
 	virtual void ConstructCells() RX;
-	virtual void PointerGotInvalid(AbstractClass* ptr, bool bUnk) RX;
+	virtual void Detach(AbstractClass* pItem, bool all) RX;
 	virtual bool DraggingInProgress() R0;
 	virtual void UpdateCrates() RX;
 	virtual void CreateEmptyMap(const RectangleStruct& mapRect, bool reuse, char nLevel, bool bUnk2) RX;
@@ -443,7 +443,7 @@ public:
  * BuildingClass::Place - RevealToAll
  * Foot/Infantry Class::Update/UpdatePosition
  * MapClass::RevealArea0 calls this to do the work
- * ParasiteClass::Infect/PointerGotInvalid
+ * ParasiteClass::Infect/Detach
  * TechnoClass::Unlimbo
  * TechnoClass::Fire uses this (r = 4) right after using RevealArea0, wtfcock
  */

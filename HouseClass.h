@@ -11,6 +11,7 @@
 #include <ScenarioClass.h>
 #include <SessionClass.h>
 #include <SideClass.h>
+#include <SuperWeaponTypeClass.h>
 #include <UnitClass.h>
 #include <UnitTypeClass.h>
 
@@ -503,6 +504,8 @@ public:
 	int FindSuperWeaponIndex(SuperWeaponType type) const;
 
 	SuperClass* FindSuperWeapon(SuperWeaponType type) const;
+
+	SuperClass* FindSuperWeapon(SuperWeaponTypeClass* type) const;
 
 	// I don't want to talk about these
 	// read the code <_<
@@ -1011,5 +1014,5 @@ public:
 	int TotalOwnedInfantryCost;
 	int TotalOwnedVehicleCost;
 	int TotalOwnedAircraftCost;
-	DWORD unknown_power_160B4;
+	int PowerSurplus;
 };

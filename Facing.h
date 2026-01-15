@@ -25,7 +25,7 @@ public:
 		DesiredFacing.SetDir(dir);
 	}
 
-	explicit FacingClass(const FacingClass& another) noexcept
+	FacingClass(const FacingClass& another) noexcept
 		: DesiredFacing { another.DesiredFacing }
 		, StartFacing { another.StartFacing }
 		, RotationTimer { another.RotationTimer }
@@ -132,8 +132,8 @@ private:
 
 public:
 
-	DirStruct DesiredFacing;
+	DirStruct DesiredFacing;  // target facing
 	DirStruct StartFacing; // The starting direction from which to calcuate the rotation.
-	CDTimerClass RotationTimer;
-	DirStruct ROT;
+	CDTimerClass RotationTimer; // counts rotation steps
+	DirStruct ROT; // Rate of Turn. INI Value * 256
 };

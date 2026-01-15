@@ -116,6 +116,16 @@ SuperClass* HouseClass::FindSuperWeapon(SuperWeaponType const type) const {
 	return this->Supers.GetItemOrDefault(index);
 }
 
+SuperClass* HouseClass::FindSuperWeapon(SuperWeaponTypeClass* const type) const {
+	for (int i = 0; i < this->Supers.Count; ++i) {
+		auto pItem = this->Supers.Items[i];
+		if (this->Supers.Items[i]->Type == type) {
+			return pItem;
+		}
+	}
+	return nullptr;
+}
+
 bool HouseClass::IsIonCannonEligibleTarget(const TechnoClass* const pTechno) const {
 	if(pTechno->InWhichLayer() == Layer::Ground && pTechno->IsAlive && !pTechno->InLimbo) {
 		return true;

@@ -23,6 +23,7 @@ class AnimClass;
 class BulletClass;
 class BuildingClass;
 class CellClass;
+class EBolt;
 class HouseClass;
 class FootClass;
 class HouseClass;
@@ -190,7 +191,7 @@ public:
 	virtual bool vt_entry_29C() R0;
 	virtual bool IsReadyToCloak() const JMP_THIS(0x6FBDC0);
 	virtual bool ShouldNotBeCloaked() const JMP_THIS(0x6FBC90);
-	virtual DirStruct* TurretFacing(DirStruct* pBuffer) const R0;
+	virtual FacingClass* TurretFacing(FacingClass* pBuffer) const R0;
 	virtual bool IsArmed() const R0; // GetWeapon(primary) && GetWeapon(primary)->WeaponType
 	virtual bool vt_entry_2B0() const R0;
 	virtual double GetStoragePercentage() const R0;
@@ -214,7 +215,7 @@ public:
 	virtual CellStruct* vt_entry_2FC(CellStruct* Buffer, DWORD dwUnk2, DWORD dwUnk3) const R0;
 	virtual CoordStruct * vt_entry_300(CoordStruct * Buffer, DWORD dwUnk2) const R0;
 	virtual DWORD vt_entry_304(DWORD dwUnk, DWORD dwUnk2) const R0;
-	virtual DirStruct* GetRealFacing(DirStruct* pBuffer) const R0;
+	virtual FacingClass* GetRealFacing(FacingClass* pBuffer) const R0;
 	virtual InfantryTypeClass* GetCrew() const R0;
 	virtual bool vt_entry_310() const R0;
 	virtual bool CanDeploySlashUnload() const R0;
@@ -350,6 +351,13 @@ public:
 		return pType ? pType->get_ID() : nullptr;
 	}
 
+	bool InRange(CoordStruct* pLocation, AbstractClass* pTarget, WeaponTypeClass* pWeapon)
+		{ JMP_THIS(0x6F7220); }
+
+	// Unit and Infantry fire logic is diffrent, this function for help to fire custom weapon, force use Unit's fire logic
+	BulletClass* Fire_IgnoreType(AbstractClass* pTarget, int idxWeapon)
+		{ JMP_THIS(0x6FDD50); }
+
 	int TimeToBuild() const
 		{ JMP_THIS(0x6F47A0); }
 
@@ -359,8 +367,14 @@ public:
 	bool CanBePermaMindControlled() const
 		{ JMP_THIS(0x53C450); }
 
-	LaserDrawClass* CreateLaser(ObjectClass *pTarget, int idxWeapon, WeaponTypeClass *pWeapon, const CoordStruct &Coords)
+	LaserDrawClass* CreateLaser(AbstractClass *pTarget, int idxWeapon, WeaponTypeClass *pWeapon, const CoordStruct &Coords)
 		{ JMP_THIS(0x6FD210); }
+
+	EBolt* Electric_Zap(AbstractClass* pTarget, WeaponTypeClass* pWeapon, const CoordStruct& Coords)
+		{ JMP_THIS(0x6FD460); }
+
+	void DrawALinkTo(CoordStruct from, CoordStruct to, ColorStruct color)
+		{ JMP_THIS(0x704E40); }
 
 	/*
 	 *  Cell->AddThreat(this->Owner, -this->ThreatPosed);
@@ -438,6 +452,9 @@ public:
 	int __fastcall ClearPlanningTokens(NetworkEvent* pEvent)
 		{ JMP_STD(0x6386E0); }
 
+	int GetElevationBonusDistance(AbstractClass* pTarget)
+		{ JMP_THIS(0x6F6F60); }
+
 	void SetTargetForPassengers(AbstractClass* pTarget)
 		{ JMP_THIS(0x710550); }
 
@@ -475,6 +492,9 @@ public:
 	WeaponStruct* GetPrimaryWeapon() const
 		{ JMP_THIS(0x70E1A0); }
 
+	bool TryNextPlanningTokenNode()
+		{ JMP_THIS(0x6385C0); }
+
 	int GetIonCannonValue(AIDifficulty difficulty) const;
 
 	int GetIonCannonValue(AIDifficulty difficulty, int maxHealth) const {
@@ -486,14 +506,15 @@ public:
 		return this->GetIonCannonValue(difficulty);
 	}
 
-	DirStruct TurretFacing() const {
-		DirStruct ret;
+	FacingClass TurretFacing() const {
+		FacingClass ret;
 		this->TurretFacing(&ret);
 		return ret;
 	}
 
-	DirStruct GetRealFacing() const {
-		DirStruct ret;
+	// return bodyFacing or turretFacing if it has turret
+	FacingClass GetRealFacing() const {
+		FacingClass ret;
 		this->GetRealFacing(&ret);
 		return ret;
 	}
@@ -614,8 +635,8 @@ public:
 	TechnoClass*     BunkerLinkedItem;
 
 	float            PitchAngle; // not exactly, and it doesn't affect the drawing, only internal state of a dropship
-	DECLARE_PROPERTY(CDTimerClass, DiskLaserTimer);
-	int           	 ROF;
+	DECLARE_PROPERTY(CDTimerClass, ROFTimer);// ROF
+	int              ROF;
 	int              Ammo;
 	int              Value; // set to actual cost when this gets queued in factory, updated only in building's 42C
 
@@ -688,7 +709,7 @@ public:
 	HouseClass*      ChronoWarpedByHouse;
 	bool             unknown_bool_430;
 	bool             IsMouseHovering;
-	bool             unknown_bool_432;
+	bool             WasSelected;
 	TeamClass*       OldTeam;
 	bool             CountedAsOwnedSpecial; // for absorbers, infantry uses this to manually control OwnedInfantry count
 	bool             Absorbed; // in UnitAbsorb/InfantryAbsorb or smth, lousy memory

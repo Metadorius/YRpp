@@ -61,14 +61,14 @@ protected:
 public:
 
 	AircraftTypeClass* Type;
-	bool unknown_bool_6C8;
+	bool LoseAmmo; // flag for Mission_Attack mission_statue == 1 == AIR_ATT_PICK_ATTACK_LOCATION
 	bool HasPassengers;	//parachutes
 	bool IsKamikaze; // when crashing down, duh
 	BuildingClass* DockNowHeadingTo;
 	bool unknown_bool_6D0;
 	bool unknown_bool_6D1;
-	bool unknown_bool_6D2;
-	char unknown_char_6D3;
-	bool unknown_bool_6D4;
+	bool IsLocked;
+	bool ParadropsLeft;
+	bool IsCarrayall;
 	bool unknown_bool_6D5;
 };

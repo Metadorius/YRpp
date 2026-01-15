@@ -4,12 +4,20 @@
 
 class CCINIClass;
 class ObjectTypeClass;
+class BuildingTypeClass;
 
 class NOVTABLE DisplayClass : public MapClass
 {
 public:
 	//Static
 	static constexpr constant_ptr<DisplayClass, 0x87F7E8u> const Instance{};
+
+	static constexpr reference<CellStruct, 0x88095Cu> const Display_ZoneCell{};
+	static constexpr reference<CellStruct, 0x880960u> const Display_ZoneOffset{};
+	static constexpr reference<CellStruct*, 0x880964u> const Display_CurrentFoundation_Data{};
+	static constexpr reference<bool, 0x880968u> const Display_PassedProximityCheck{};
+	static constexpr reference<BuildingTypeClass*, 0x880990u> const Display_PendingObject{};
+	static constexpr reference<int, 0x880994u> const Display_PendingHouse{};
 
 	//WIP: DisplayClass::TacticalClass goes HERE
 
@@ -63,6 +71,17 @@ public:
 		CellStruct outBuffer;
 		FoundationBoundsSize(outBuffer, pFoundationData);
 		return outBuffer;
+	}
+
+	bool Passes_Proximity_Check(BuildingTypeClass* pPendingObject, int houseIndex, CellStruct* foundation, CellStruct* center)
+		{ JMP_THIS(0x4A8EB0); }
+
+	bool Passes_Proximity_Check()
+	{
+		CellStruct zoneCell = Display_ZoneCell.get();
+		CellStruct zoneOffset = Display_ZoneOffset.get();
+		CellStruct center = zoneCell + zoneOffset;
+		return Passes_Proximity_Check(Display_PendingObject.get(), Display_PendingHouse.get(), Display_CurrentFoundation_Data.get(), &center);
 	}
 
 	/* marks or unmarks the cells pointed to by CurrentFoundationData as containing a building */

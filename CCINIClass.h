@@ -338,6 +338,11 @@ public:
 	static constexpr reference<CCINIClass, 0x887208u> const INI_UIMD{};
 	static constexpr reference<CCINIClass, 0x8870C0u> const INI_RA2MD{};
 
+	// get the fileName
+	static constexpr reference<BYTE[], 0x826260u> const INI_Rules_FileName{};
+	static constexpr reference<BYTE[], 0x82621Cu> const INI_AI_FileName{};
+	static constexpr reference<BYTE[], 0x826254u> const INI_Art_FileName{};
+
 	//non-static
 	CCINIClass() : INIClass(false)
 	{

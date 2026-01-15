@@ -13,9 +13,15 @@ public:
 	static const Vector2D Empty;
 
 	//no constructor, so this class stays aggregate and can be initialized using the curly braces {}
-	T X,Y;
+	T X, Y;
 
 	//operator overloads
+	template<typename T2>
+	void operator=(const Vector2D<T2>& a)
+	{
+		this->X = static_cast<T>(a.X);
+		this->Y = static_cast<T>(a.Y);
+	}
 	//addition
 	Vector2D operator+(const Vector2D& a) const
 	{
@@ -72,6 +78,11 @@ public:
 	{
 		return static_cast<double>(X) * a.X + static_cast<double>(Y) * a.Y;
 	}
+	// for map key
+	bool operator<(const Vector2D& other) const
+	{
+		return other.X >= X || (other.X < X && other.Y >= Y);
+	}
 	//magnitude
 	double Magnitude() const
 	{
@@ -102,18 +113,24 @@ public:
 	double FindScalar(const Vector2D& a) const
 	{
 		double r = static_cast<double>(a.X) / static_cast<double>(X);
-		if(static_cast<T>(r * Y) == a.Y) {
+		if (static_cast<T>(r * Y) == a.Y) {
 			return r;
-		} else {
+		}
+		else {
 			//the vectors are not collinear, return NaN!
-			unsigned long NaN[2] = {0xFFFFFFFF,0x7FFFFFFF};
+			unsigned long NaN[2] = { 0xFFFFFFFF,0x7FFFFFFF };
 			return *reinterpret_cast<double*>(NaN);
 		}
+	}
+	//is empty
+	bool IsEmpty()
+	{
+		return X == Empty.X && Y == Empty.Y;
 	}
 };
 
 template <typename T>
-const Vector2D<T> Vector2D<T>::Empty = {T(), T()};
+const Vector2D<T> Vector2D<T>::Empty = { T(), T() };
 
 /*==========================================
 ============ 3D Vector =====================
@@ -125,9 +142,16 @@ public:
 	static const Vector3D Empty;
 
 	//no constructor, so this class stays aggregate and can be initialized using the curly braces {}
-	T X,Y,Z;
+	T X, Y, Z;
 
 	//operator overloads
+	template<typename T2>
+	void operator=(const Vector3D<T2>& a)
+	{
+		this->X = static_cast<T>(a.X);
+		this->Y = static_cast<T>(a.Y);
+		this->Z = static_cast<T>(a.Z);
+	}
 	//addition
 	Vector3D operator+(const Vector3D& a) const
 	{
@@ -192,6 +216,11 @@ public:
 			+ static_cast<double>(Y) * a.Y
 			+ static_cast<double>(Z) * a.Z;
 	}
+	// for map key
+	bool operator<(const Vector3D& other) const
+	{
+		return other.X >= X || (other.X < X && other.Y >= Y) || (other.X < X && other.Y < Y && other.Z >= Z);
+	}
 	//magnitude
 	double Magnitude() const
 	{
@@ -221,11 +250,12 @@ public:
 	double FindScalar(const Vector3D& a) const
 	{
 		double r = static_cast<double>(a.X) / static_cast<double>(X);
-		if((static_cast<T>(r * Y) == a.Y) && (static_cast<T>(r * Z) == a.Z)) {
+		if ((static_cast<T>(r * Y) == a.Y) && (static_cast<T>(r * Z) == a.Z)) {
 			return r;
-		} else {
+		}
+		else {
 			//the vectors are not collinear, return NaN!
-			unsigned long NaN[2] = {0xFFFFFFFF,0x7FFFFFFF};
+			unsigned long NaN[2] = { 0xFFFFFFFF,0x7FFFFFFF };
 			return *reinterpret_cast<double*>(NaN);
 		}
 	}
@@ -237,7 +267,12 @@ public:
 			Z * a.X - X * a.Z,
 			X * a.Y - Y * a.X };
 	}
+	//is empty
+	bool IsEmpty()
+	{
+		return X == Empty.X && Y == Empty.Y && Z == Empty.Z;
+	}
 };
 
 template <typename T>
-const Vector3D<T> Vector3D<T>::Empty = {T(), T(), T()};
+const Vector3D<T> Vector3D<T>::Empty = { T(), T(), T() };

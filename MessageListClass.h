@@ -83,9 +83,11 @@ public:
 	void PrintMessage(const wchar_t* pMessage, int durationFrames = 0x96, int nColorSchemeIndex = ColorScheme::White, bool bSilent = false)
 		{ this->AddMessage(nullptr, 0, pMessage, nColorSchemeIndex, static_cast<TextPrintType>(0x4046), durationFrames, bSilent); }
 
+	void PrintMessage(const wchar_t* pLabel, const wchar_t* pMessage, int durationFrames = 0x96, int nColorSchemeIndex = ColorScheme::White, bool bSilent = false)
+		{ this->AddMessage(pLabel, 0, pMessage, nColorSchemeIndex, static_cast<TextPrintType>(0x4046), static_cast<int>(durationFrames), bSilent); }
+
 	void PrintMessage(const wchar_t* pMessage, double durationMinutes, int nColorSchemeIndex = ColorScheme::White, bool bSilent = false)
 		{ this->AddMessage(nullptr, 0, pMessage, nColorSchemeIndex, static_cast<TextPrintType>(0x4046), static_cast<int>(durationMinutes * 900), bSilent); }
-
 
 	TextLabelClass* MessageList;
 	Point2D MessagePos;

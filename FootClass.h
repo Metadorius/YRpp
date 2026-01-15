@@ -68,7 +68,7 @@ public:
 	virtual DWORD vt_entry_53C(DWORD dwUnk) R0;
 	virtual void vt_entry_540(DWORD dwUnk) RX;
 	virtual void SetSpeedPercentage(double percentage) RX;
-	virtual void vt_entry_548() RX;
+	virtual void vt_entry_548() RX; // StopMoving?
 	virtual void vt_entry_54C() RX;
 	virtual bool vt_entry_550(DWORD dwUnk) R0;
 
@@ -151,8 +151,8 @@ public:
 	DWORD           unknown_530;
 	DWORD           unknown_534;
 	int				WalkedFramesSoFar;
-	bool            unknown_bool_53C;
-	DWORD           unknown_540;
+	bool            PlayingMovingSound;
+	DWORD           MovingSoundDelay;
 
 	DECLARE_PROPERTY(AudioController, Audio7);
 

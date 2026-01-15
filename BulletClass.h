@@ -127,14 +127,14 @@ public:
 
 	BulletTypeClass* Type;
 	TechnoClass* Owner;
-	bool unknown_B4;
+	bool IsInaccurate;
 	BulletData Data;
 	bool Bright;
 	DWORD unknown_E4;
 	BulletVelocity Velocity;
 	DWORD unknown_100;
-	bool unknown_104;
-	DWORD unknown_108;
+	bool CourseLocked;
+	int CourseLockedDuration;
 	AbstractClass* Target;
 	int Speed;
 	int InheritedColor;

@@ -5,7 +5,9 @@
 #pragma once
 
 #include <GeneralDefinitions.h>
+#include <ArrayClasses.h>
 
+class TechnoClass;
 class UnitClass;
 
 class EBolt

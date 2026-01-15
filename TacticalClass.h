@@ -33,6 +33,12 @@ public:
 	bool CoordsToClient(CoordStruct const& coords, Point2D* pOutClient) const
 		{ JMP_THIS(0x6D2140); }
 
+	Point2D CoordsToClient(CoordStruct const& coords) const {
+		Point2D buffer;
+		this->CoordsToClient(coords, &buffer);
+		return buffer;
+	}
+
 	Point2D* CoordsToScreen(Point2D* pDest, CoordStruct* pSource)
 		{ JMP_THIS(0x6D1F10); }
 

@@ -24,6 +24,31 @@ class TagClass;
 class TiberiumClass;
 class PixelFXClass;
 
+enum class TileType : unsigned int
+{
+	Unknown = 0,
+	Tunnel = 0x484AB0,
+	Water = 0x485060,
+	Blank = 0x486380,
+	Ramp = 0x4863A0,
+	Cliff = 0x4863D0,
+	Shore = 0x4865B0,
+	Wet = 0x4865D0,
+	MiscPave = 0x486650,
+	Pave = 0x486670,
+	DirtRoad = 0x486690,
+	PavedRoad = 0x4866D0,
+	PavedRoadEnd = 0x4866F0,
+	PavedRoadSlope = 0x486710,
+	Median = 0x486730,
+	Bridge = 0x486750,
+	WoodBridge = 0x486770,
+	ClearToSandLAT = 0x486790,
+	Green = 0x4867B0,
+	NotWater = 0x4867E0,
+	DestroyableCliff = 0x486900
+};
+
 class NOVTABLE CellClass : public AbstractClass
 {
 public:
@@ -178,6 +203,9 @@ public:
 	void SetMapCoords(const CoordStruct& coords)
 		{ JMP_THIS(0x485240); }
 
+	int GetFloorHeightAdjust() const
+		{ JMP_THIS(0x485080); }
+
 	int GetFloorHeight(Point2D const& subcoords) const
 		{ JMP_THIS(0x47B3A0); }
 
@@ -190,6 +218,15 @@ public:
 		CoordStruct buffer;
 		GetCellCoords(&buffer);
 		return buffer;
+	}
+
+	// pass
+	bool IsClearToMove(SpeedType speedType, bool ignoreInfantry, bool ignoreVehicles, ZoneType zone, MovementZone movementZone, int level, bool alt)
+		{ JMP_THIS(0x4834A0); }
+
+	bool IsClearToMove(SpeedType speedType, MovementZone movementZone, bool ignoreInfantry = false, bool ignoreVehicles = false, int level = -1)
+	{
+		return IsClearToMove(speedType, ignoreInfantry, ignoreInfantry, ZoneType::None, movementZone, level, (bool)(this->Flags & CellFlags::CenterRevealed));
 	}
 
 	void ActivateVeins()
@@ -250,8 +287,8 @@ public:
 
 	// helper
 	bool ContainsBridge() const
-	{ 
-		return static_cast<bool>(this->Flags & CellFlags::BridgeHead); 
+	{
+		return static_cast<bool>(this->Flags & CellFlags::BridgeHead);
 	}
 	bool ContainsBridgeEx() const
 	{
@@ -290,6 +327,31 @@ public:
 	ISTILE(Green, 0x4867B0);
 	ISTILE(NotWater, 0x4867E0);
 	ISTILE(DestroyableCliff, 0x486900);
+
+	TileType GetTileType()
+	{
+		if (Tile_Is_Tunnel()) return TileType::Tunnel;
+		if (Tile_Is_Water()) return TileType::Water;
+		if (Tile_Is_Blank()) return TileType::Blank;
+		if (Tile_Is_Ramp()) return TileType::Ramp;
+		if (Tile_Is_Cliff()) return TileType::Cliff;
+		if (Tile_Is_Shore()) return TileType::Shore;
+		if (Tile_Is_Wet()) return TileType::Wet;
+		if (Tile_Is_MiscPave()) return TileType::MiscPave;
+		if (Tile_Is_Pave()) return TileType::Pave;
+		if (Tile_Is_DirtRoad()) return TileType::DirtRoad;
+		if (Tile_Is_PavedRoad()) return TileType::PavedRoad;
+		if (Tile_Is_PavedRoadEnd()) return TileType::PavedRoadEnd;
+		if (Tile_Is_PavedRoadSlope()) return TileType::PavedRoadSlope;
+		if (Tile_Is_Median()) return TileType::Median;
+		if (Tile_Is_Bridge()) return TileType::Bridge;
+		if (Tile_Is_WoodBridge()) return TileType::WoodBridge;
+		if (Tile_Is_ClearToSandLAT()) return TileType::ClearToSandLAT;
+		if (Tile_Is_Green()) return TileType::Green;
+		if (Tile_Is_NotWater()) return TileType::NotWater;
+		if (Tile_Is_DestroyableCliff()) return TileType::DestroyableCliff;
+		return TileType::Unknown;
+	}
 
 	static CoordStruct Cell2Coord(const CellStruct &cell, int z = 0)
 	{

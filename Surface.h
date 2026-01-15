@@ -12,6 +12,8 @@ struct SHPStruct;
 class NOVTABLE Surface
 {
 public:
+	static constexpr reference<bool*, 0x84310Cu> const Pattern{};
+
 	Surface() = default;
 
 	virtual ~Surface() RX;
@@ -108,12 +110,20 @@ public:
 
 	virtual bool IsDSurface() R0; // guessed - secsome
 
+	static bool __fastcall ClipLine(Point2D& point1, Point2D& point2, RectangleStruct& Bounds)
+		{ JMP_STD(0x7BC2B0); }
+
 	// Helper
 	RectangleStruct GetRect()
 	{
-		RectangleStruct ret;
+		RectangleStruct ret{ 0, 0, 0, 0 };
 		this->GetRect(&ret);
 		return ret;
+	}
+
+	bool DrawDashedLine(Point2D* pStart, Point2D* pEnd, int nColor, int nOffset)
+	{
+		return DrawDashedLine(pStart, pEnd, nColor, Pattern.get(), nOffset);
 	}
 
 
@@ -139,9 +149,9 @@ public:
 class NOVTABLE BSurface : public XSurface
 {
 public:
-	static constexpr constant_ptr<BSurface, 0xB2D928> VoxelSurface {};
+	static constexpr constant_ptr<BSurface, 0xB2D928> VoxelSurface{};
 
-	BSurface() : XSurface(), Buffer { this->Width * this->Height * 2 } { BytesPerPixel = 2; ((int*)this)[0] = 0x7E2070; }
+	BSurface() : XSurface(), Buffer{ this->Width * this->Height * 2 } { BytesPerPixel = 2; ((int*)this)[0] = 0x7E2070; }
 
 	MemoryBuffer Buffer;
 };
@@ -186,22 +196,26 @@ static Point2D* Fancy_Text_Print_Wide(const Point2D& retBuffer, const wchar_t* T
 class NOVTABLE DSurface : public XSurface
 {
 public:
-	static constexpr reference<DSurface*, 0x8872FCu> const Tile {};
-	static constexpr reference<DSurface*, 0x887300u> const Sidebar {};
-	static constexpr reference<DSurface*, 0x887308u> const Primary {};
-	static constexpr reference<DSurface*, 0x88730Cu> const Hidden {};
-	static constexpr reference<DSurface*, 0x887310u> const Alternate {};
-	static constexpr reference<DSurface*, 0x887314u> const Temp {};
-	static constexpr reference<DSurface*, 0x88731Cu> const Composite {};
+	static constexpr reference<DSurface*, 0x8872FCu> const Tile{};
+	static constexpr reference<DSurface*, 0x887300u> const Sidebar{};
+	static constexpr reference<DSurface*, 0x887308u> const Primary{};
+	static constexpr reference<DSurface*, 0x88730Cu> const Hidden{};
+	static constexpr reference<DSurface*, 0x887310u> const Alternate{};
+	static constexpr reference<DSurface*, 0x887314u> const Temp{};
+	static constexpr reference<DSurface*, 0x88731Cu> const Composite{};
 
-	static constexpr reference<RectangleStruct, 0x886F90u> const SidebarBounds {};
-	static constexpr reference<RectangleStruct, 0x886FA0u> const ViewBounds {};
-	static constexpr reference<RectangleStruct, 0x886FB0u> const WindowBounds {};
+	static constexpr reference<RectangleStruct, 0x886F90u> const SidebarBounds{};
+	static constexpr reference<RectangleStruct, 0x886FA0u> const ViewBounds{};
+	static constexpr reference<RectangleStruct, 0x886FB0u> const WindowBounds{};
 
 	virtual bool DrawGradientLine(RectangleStruct* pRect, Point2D* pStart, Point2D* pEnd,
 		ColorStruct* pStartColor, ColorStruct* pEndColor, float fStep, int nColor) R0;
 
 	virtual bool CanBlit() R0;
+
+	void DrawLineBlit(RectangleStruct* pRect, Point2D* pStart, Point2D* pEnd,
+		ColorStruct* pStartColor, int mult, int start_z, int end_z)
+	{ JMP_THIS(0x4BEAC0); }
 
 	// Comments from thomassneddon
 	void DrawSHP(ConvertClass* Palette, SHPStruct* SHP, int FrameIndex,
@@ -215,8 +229,29 @@ public:
 			ZGradientDescIndex, Brightness, TintColor, ZShape, ZShapeFrame, XOffset, YOffset);
 	}
 
+	void DrawSHP(ConvertClass* Palette, SHPStruct* SHP, int FrameIndex,
+		const Point2D* const Position, const RectangleStruct* const Bounds,
+		BlitterFlags Flags = (BlitterFlags)0x600,
+		int Brightness = 1000,
+		int TintColor = 0)
+	{
+		DrawSHP(Palette, SHP, FrameIndex, Position, Bounds, Flags, 0,
+			0,
+			ZGradient::Ground,
+			Brightness,
+			TintColor, nullptr, 0, 0, 0
+		);
+	}
+
+	void DrawSHP(ConvertClass* Palette, SHPStruct* SHP, int FrameIndex,
+		const Point2D* const Position, BlitterFlags Flags = (BlitterFlags)0x600)
+	{
+		RectangleStruct bound = this->GetRect();
+		DrawSHP(Palette, SHP, FrameIndex, Position, &bound, Flags);
+	}
+
 	void DrawText(const wchar_t* pText, RectangleStruct* pBounds, Point2D* pLocation,
-		COLORREF ForeColor, COLORREF BackColor, TextPrintType Flag)
+		COLORREF ForeColor, COLORREF BackColor = 0, TextPrintType Flag = TextPrintType::NoShadow)
 	{
 		Point2D tmp = { 0, 0 };
 
@@ -228,7 +263,7 @@ public:
 		RectangleStruct rect = { 0, 0, 0, 0 };
 		this->GetRect(&rect);
 
-		Point2D tmp { 0,0 };
+		Point2D tmp{ 0, 0 };
 		Fancy_Text_Print_Wide(tmp, pText, this, rect, *pLoction, Color, 0, TextPrintType::NoShadow);
 	}
 
@@ -237,6 +272,30 @@ public:
 		Point2D P = { X ,Y };
 		DrawText(pText, &P, Color);
 	}
+
+	/*
+	void DrawText(const wchar_t* pText, RectangleStruct* pBounds, Point2D* pLocation,
+		ColorStruct ForeColor, ColorStruct BackColor = Colors::Empty, TextPrintType Flag = TextPrintType::NoShadow)
+	{
+		DrawText(pText, pBounds, pLocation, Drawing::RGB_To_Int(ForeColor), Drawing::RGB_To_Int(BackColor), Flag);
+	}
+
+	void DrawText(const wchar_t* pText, Point2D* pPos, ColorStruct color, TextPrintType flag = TextPrintType::NoShadow)
+	{
+		RectangleStruct bound = this->GetRect();
+		DrawText(pText, &bound, pPos, Drawing::RGB_To_Int(color), 0, flag);
+	}
+
+	void DrawText(const wchar_t* pText, CoordStruct location, ColorStruct color, TextPrintType flag = TextPrintType::NoShadow)
+	{
+		Point2D pos{ 0, 0 };
+		if (TacticalClass::Instance->CoordsToClient(location, &pos))
+		{
+			RectangleStruct bound = this->GetRect();
+			DrawText(pText, &bound, &pos, Drawing::RGB_To_Int(color), 0, flag);
+		}
+	}
+	*/
 
 	void* Buffer;
 	bool IsAllocated;

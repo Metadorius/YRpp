@@ -206,7 +206,7 @@ public:
 	void Read_AdvancedCommandBar(CCINIClass *pINI)
 		{ JMP_THIS(0x674650); }
 
-	void PointerGotInvalid(AbstractClass* pInvalid, bool removed)
+	void Detach(AbstractClass* pItem, bool all)
 		{ JMP_THIS(0x678850); }
 
 

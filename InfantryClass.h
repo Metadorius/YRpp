@@ -35,6 +35,8 @@ public:
 		: InfantryClass(noinit_t())
 	{ JMP_THIS(0x517A50); }
 
+	int UpdateDeplory()
+	{ JMP_THIS(0x521320); }
 protected:
 	explicit __forceinline InfantryClass(noinit_t) noexcept
 		: FootClass(noinit_t())

@@ -89,6 +89,9 @@ public:
 	virtual int Mission_SpyPlaneApproach() R0;
 	virtual int Mission_SpyPlaneOverfly() R0;
 
+	int Mission_Move_Carryall() // only use for AircraftClass
+	{ JMP_THIS(0x416D50); }
+
 	//Constructor
 	MissionClass() noexcept
 		: MissionClass(noinit_t())

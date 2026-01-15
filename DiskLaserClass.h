@@ -39,7 +39,7 @@ public:
 	void Fire(TechnoClass* pOwner, TechnoClass* pTarget, WeaponTypeClass* pWeapon, int nDamage)
 		{ JMP_THIS(0x4A71A0); }
 
-	void PointerGotInvalid(AbstractClass* pInvalid)
+	void Detach(TechnoClass* pTecno)
 		{ JMP_THIS(0x4A7900); }
 
 	//Constructor
